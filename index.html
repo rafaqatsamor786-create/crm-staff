@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rafaqat.com CRM • Staff Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: linear-gradient(135deg, #4f46e5, #9333ea, #ec4899);
+        background-size: 150% 150%;
+        animation: gradientMove 12s ease infinite;
+        min-height: 100vh;
+        padding: 0;
+        color: #fff;
+        overflow-x: hidden;
+    }
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* LOGIN SCREEN */
+    #loginScreen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+    }
+    .login-card {
+        width: 380px;
+        background: rgba(255,255,255,0.20);
+        padding: 32px;
+        border-radius: 28px;
+        backdrop-filter: blur(18px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+        border: 1px solid rgba(255,255,255,0.25);
+        animation: fadeUp .8s ease;
+    }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    input {
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        border: none;
+        margin-bottom: 20px;
+        font-size: 15px;
+        background: rgba(255,255,255,0.88);
+        color: #000;
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        border: none;
+        background: #fff;
+        color: #4f46e5;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(255,255,255,0.6);
+    }
+
+    /* DASHBOARD */
+    #dashboard {
+        display: none;
+        padding: 0;
+        min-height: 100vh;
+    }
+
+    .layout {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 240px;
+        background: rgba(0,0,0,0.25);
+        backdrop-filter: blur(14px);
+        padding: 30px 20px;
+        border-right: 1px solid rgba(255,255,255,0.2);
+    }
+    .sidebar h3 {
+        margin: 0 0 20px;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    /* MAIN CONTENT */
+    .main {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+    .main h2 {
+        font-size: 30px;
+        margin-bottom: 20px;
+        font-weight: 800;
+    }
+
+    .filter-bar {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    select, .searchBox {
+        padding: 12px;
+        border-radius: 14px;
+        border: none;
+        background: rgba(255,255,255,0.88);
+        font-size: 14px;
+        color: black;
+    }
+
+    /* LEAD CARD */
+    .lead-card {
+        background: rgba(255,255,255,0.18);
+        backdrop-filter: blur(14px);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr .6fr .6fr auto;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .lead-name {
+        font-weight: 700;
+        font-size: 15px;
+        color: #fff;
+    }
+
+    .badge {
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .New { background: #3b82f6; }
+    .Contacted { background: #10b981; }
+    .Qualified { background: #f59e0b; }
+    .Proposal { background: #6366f1; }
+    .Won { background: #22c55e; }
+    .Lost { background: #ef4444; }
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+    <div class="login-card">
+        <h2 style="text-align:center;margin-bottom:20px;">Staff Login</h2>
+
+        <input id="username" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+
+        <button onclick="doLogin()">Login</button>
+
+        <p id="loginError" style="color:#fee2e2;text-align:center;margin-top:15px;display:none;">Invalid credentials</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h3>Rafaqat.com CRM</h3>
+            <button onclick="logout()">Logout</button>
+        </div>
+
+        <!-- MAIN -->
+        <div class="main">
+            <h2>Lead Management</h2>
+
+            <div class="filter-bar">
+                <input class="searchBox" id="searchInput" placeholder="Search leads...">
+                <select id="filterType">
+                    <option value="">Lead Type</option>
+                    <option>Hot</option>
+                    <option>Warm</option>
+                    <option>Cold</option>
+                    <option>Not Interested</option>
+                </select>
+                <select id="filterStage">
+                    <option value="">Stage</option>
+                    <option>New</option>
+                    <option>Contacted</option>
+                    <option>Qualified</option>
+                    <option>Proposal</option>
+                    <option>Won</option>
+                    <option>Lost</option>
+                </select>
+            </div>
+
+            <!-- LEAD LIST -->
+            <div id="leadList"></div>
+
+        </div>
+    </div>
+</div>
+
+<!-- JS + FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* Firebase Config */
+const firebaseConfig = {
+  apiKey: "AIzaSyC6E2DWPHJZKQWuv6v3Bpyk9tVnkYU8dSk",
+  authDomain: "rafaqat-crm.firebaseapp.com",
+  databaseURL: "https://rafaqat-crm-default-rtdb.firebaseio.com",
+  projectId: "rafaqat-crm",
+  storageBucket: "rafaqat-crm.appspot.com",
+  messagingSenderId: "321407849510",
+  appId: "1:321407849510:web:2200b31b9be0f6a9c1c2e7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* 🔐 Staff Login Accounts */
+const staffUsers = {
+    "admin": "123456",
+    "staff1": "crm2025",
+    "sales": "leadteam"
+};
+
+/* LOGIN */
+window.doLogin = function () {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+
+    if (staffUsers[u] && staffUsers[u] === p) {
+        localStorage.setItem("loggedInStaff", u);
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        loadLeads();
+    } else {
+        document.getElementById("loginError").style.display = "block";
+    }
+};
+
+/* LOGOUT */
+window.logout = function () {
+    localStorage.removeItem("loggedInStaff");
+    location.reload();
+};
+
+/* AUTO LOGIN */
+window.onload = () => {
+    if (localStorage.getItem("loggedInStaff")) {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        loadLeads();
+    }
+};
+
+/* LOAD LEADS */
+window.loadLeads = function () {
+    const leadList = document.getElementById("leadList");
+    const leadsRef = ref(db, "leads");
+
+    onValue(leadsRef, (snapshot) => {
+        leadList.innerHTML = "";
+
+        snapshot.forEach(child => {
+            const lead = child.val();
+
+            leadList.innerHTML += `
+                <div class="lead-card">
+                    <div class="lead-name">${lead.fullName || "-"}</div>
+                    <div>${lead.email || "-"}</div>
+                    <div>${lead.phone || "-"}</div>
+                    <div><span class="badge ${lead.stage || "New"}">${lead.stage || "New"}</span></div>
+                    <div><span class="badge">${lead.leadType || "-"}</span></div>
+                    <button style="padding:8px 14px;border-radius:10px;border:none;">View</button>
+                </div>
+            `;
+        });
+    });
+};
+</script>
+
+</body>
+</html>
